@@ -15,15 +15,15 @@ def dilate_weights(weights, dilation_factor, kernel_size, device):
 		for i in range(kernel_size - 1):
 			for j in range(dilation_factor - 1):
 				A = np.insert(A, i + 1 + i*(dilation_factor - 1) + j, np.zeros(kernel_size), axis = 1)
-		A = torch.from_numpy(A, device = device)
-		A = A.type(torch.FloatTensor)
+		A = torch.from_numpy(A).float().to(device)
+		#A = A.type(torch.FloatTensor)
 		return torch.matmul(torch.t(A), torch.matmul(weights, A))
 
 def shear_weights(weights, kernel_size, shear, dilation_factor, device):
 	Shear = np.identity(kernel_size)
 	Shear[int(shear[0]), int(shear[1])] = shear[2]
-	Shear = torch.from_numpy(Shear, device = device)
-	Shear = Shear.type(torch.FloatTensor)
+	Shear = torch.from_numpy(Shear).float().to(device)
+	#Shear = Shear.type(torch.FloatTensor)
 	return torch.matmul(weights, Shear)
 
 class shear_layer(nn.Module):
@@ -39,7 +39,7 @@ class shear_layer(nn.Module):
 		self.device = device
 		
 
-		self.conv_weight = nn.Parameter(torch.randn(out_channels/((num_dilations)*((np.shape(shears))[0])),in_channels, kernel_size, kernel_size)).cuda()
+		self.conv_weight = nn.Parameter(torch.randn(out_channels/((num_dilations)*((np.shape(shears))[0])),in_channels, kernel_size, kernel_size).cuda())
 		nn.init.orthogonal_(self.conv_weight, init.calculate_gain('relu'))
 		
 

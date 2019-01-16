@@ -39,8 +39,8 @@ testing_data_loader = DataLoader(dataset=test_set, num_workers=opt.threads, batc
 print('===> Building model')
 model = Net(upscale_factor=opt.upscale_factor, device = "cuda").to(device)
 criterion = nn.MSELoss()
-
-optimizer = optim.Adam(model.parameters(), lr=opt.lr)
+#print(list(model.parameters()))
+optimizer = optim.Adam(list(model.parameters()), lr=opt.lr)
 
 
 def train(epoch):
