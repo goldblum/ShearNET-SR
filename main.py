@@ -42,7 +42,7 @@ print('===> Building model')
 
 modelFns = {'SRResNet':Models.SRResNet.SRResNet, 'SRResNet_shear':Models.SRResNet_shear.SRResNet_shear, 'SRResNet_dilate':Models.SRResNet_dilate.SRResNet_dilate, 'SRResNet_shearAndDilate':Models.SRResNet_shearAndDilate.SRResNet_shearAndDilate}
 modelFN = modelFns[ args.model ]
-model = modelFN(in_size, res_channels, num_dilations, num_shears, device).to(device)
+model = modelFN(device).to(device)
 criterion = nn.MSELoss()
 #print(list(model.parameters()))
 optimizer = optim.Adam(list(model.parameters()), lr=args.lr)
