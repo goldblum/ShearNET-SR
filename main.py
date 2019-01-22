@@ -12,7 +12,7 @@ from data import get_training_set, get_test_set
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
-parser.add_argument('--batchSize', type=int, default=16, help='training batch size')
+parser.add_argument('--batchSize', type=int, default=48, help='training batch size')
 parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
 parser.add_argument('--nEpochs', type=int, default=1, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
@@ -58,7 +58,7 @@ def train(epoch):
         epoch_loss += loss.item()
         loss.backward()
         optimizer.step()
-	if iteration > 100:
+	if iteration > 10:
 		break 
 
         print("===> Epoch[{}]({}/{}): Loss: {:.4f}".format(epoch, iteration, len(training_data_loader), loss.item()))
@@ -86,5 +86,5 @@ def checkpoint(epoch):
 
 for epoch in range(1, args.nEpochs + 1):
     train(epoch)
-    test()
+    #test()
     checkpoint(epoch)
