@@ -41,11 +41,7 @@ def shear_weights(weights, kernel_size, direction, shift, transpose, device, pad
 	
 	
 	if transpose:	
-		#print("first weights")
-		#print(new_weights[0,0,:,:])
 		new_weights = torch.transpose(new_weights, 2,3).contiguous()
-		#print("after transpose")
-		#print(new_weights[0,0,:,:])
 	
 	if pad:	
 		new_weights = F.pad(new_weights, (shift,shift, shift, shift), "constant", 0)
@@ -101,21 +97,6 @@ class shear_layer(nn.Module):
 					out = torch.cat((out, F.relu(F.conv2d(x, shear_weights(dilate_weights(self.conv_weight, i + 1, 3, self.device), dilated_kernel_size , direction, shift, transpose, self.device), bias=None, stride=1, padding=pad, dilation=1, groups=1))),1)		
 		return out
 
-'''
-class Net(nn.Module):
-	def __init__(self, device):
-		super(Net, self).__init__()
-		self.lay1 = shear_layer( 1, 14, 10, 2, 5, 3, device)
-		self.lay2 = shear_layer( 100, 14, 4, 1, 1, 3, device)
-		self.pixel_shuffle = nn.PixelShuffle(2)
-		#init.orthogonal_(self.lay2.weight, init.calculate_gain('relu'))
-
-	def forward(self, x):
-		x = F.relu(self.lay1(x))
-		x = F.relu(self.lay2(x)) 
-		x = self.pixel_shuffle(x)
-		return x
-'''
 
 class _Residual_Block(nn.Module):
     def __init__(self, in_size, device, res_trainable_channels):
@@ -141,17 +122,17 @@ class Net(nn.Module):
 	self.res_trainable_channels = res_trainable_channels
 	self.device = device
 	self.im_size = im_size
-        self.conv_input = nn.Conv2d(in_channels=1, out_channels = self.res_trainable_channels * 10, kernel_size=9, stride=1, padding=4, bias=False)
+        self.conv_input = nn.Conv2d(in_channels=4, out_channels = self.res_trainable_channels * 10, kernel_size=9, stride=1, padding=4, bias=False)
         self.relu = nn.LeakyReLU(0.2, inplace=True)
         self.residual = self.make_layer(_Residual_Block, 16)
         self.conv_mid = nn.Conv2d(in_channels=self.res_trainable_channels * 10, out_channels=self.res_trainable_channels * 10, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn_mid = nn.InstanceNorm2d(self.res_trainable_channels * 10, affine=True)
         self.upscale2x = nn.Sequential(
-            nn.Conv2d(in_channels=self.res_trainable_channels * 10, out_channels=256, kernel_size=3, stride=1, padding=1, bias=False),
+            nn.Conv2d(in_channels=self.res_trainable_channels * 10, out_channels=64, kernel_size=3, stride=1, padding=1, bias=False),
             nn.PixelShuffle(2),
             nn.LeakyReLU(0.2, inplace=True)
         )
-        self.conv_output = nn.Conv2d(in_channels=64, out_channels=1, kernel_size=9, stride=1, padding=4, bias=False)
+        self.conv_output = nn.Conv2d(in_channels=16, out_channels=4, kernel_size=9, stride=1, padding=4, bias=False)
         
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -177,6 +158,6 @@ class Net(nn.Module):
         return out
 
 
-def SRResNet_shearAndDilate(device):
-	model = Net(device)
+def SRResNet_shearAndDilate(device, trainable_channels):
+	model = Net(device, trainable_channels)
 	return model
