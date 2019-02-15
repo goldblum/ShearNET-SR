@@ -1,22 +1,31 @@
-cd ..
-cd ACGAN.PyTorch
+python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 4 --model_save "./ShearAndDilate_ch=4_ConvergenceTest" 
 
-python main.py
+python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 4 --num_shears 0 --model_save "./ShearAndDilate_ch=4_NoShears" 
 
-cd ..
-cd ShearNET-SR
+python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 4 --num_dilations 0 --model_save "./ShearAndDilate_ch=4_NoDilations" 
 
-python main.py --nEpochs 300 --model SRResNet_shearAndDilate --cuda --res_channels 1
+: <<'END'
+python main.py --nEpochs 50 --load_path './checkpoints/SRResNet_shearAndDilate/epoch_100_channels=4_blocks=16.pth' --np_load 'SRResNet_shearAndDilate_channels = 4_blocks=16psnr.npy' --cuda 
 
-python main.py --nEpochs 300 --model SRResNet --cuda --res_channels 1
+python main.py --nEpochs 50 --load_path './checkpoints/SRResNet/epoch_100_channels=4_blocks=16.pth' --np_load 'SRResNet_channels = 4_blocks=16psnr.npy' --cuda 
 
-python main.py --nEpochs 300 --model SRResNet_shearAndDilate --cuda --res_channels 4
+python main.py --nEpochs 50 --load_path './checkpoints/SRResNet_shearAndDilate/epoch_100_channels=8_blocks=16.pth' --np_load 'SRResNet_shearAndDilate_channels = 8_blocks=16psnr.npy' --cuda  
 
-python main.py --nEpochs 300 --model SRResNet --cuda --res_channels 4
+python main.py --nEpochs 50 --load_path './checkpoints/SRResNet/epoch_100_channels=8_blocks=16.pth' --np_load 'SRResNet_channels = 8_blocks=16psnr.npy' --cuda  
 
+python main.py --nEpochs 50 --load_path './checkpoints/SRResNet_shearAndDilate/epoch_100_channels=8_blocks=8.pth' --np_load 'SRResNet_shearAndDilate_channels = 8_blocks=8psnr.npy' --cuda  
 
+python main.py --nEpochs 50 --load_path './checkpoints/SRResNet/epoch_100_channels=8_blocks=8.pth' --np_load 'SRResNet_channels = 8_blocks=8psnr.npy' --cuda  
 
+python main.py --nEpochs 50 --load_path './checkpoints/SRResNet_shearAndDilate/epoch_100_channels=16_blocks=8.pth' --np_load 'SRResNet_shearAndDilate_channels = 16_blocks=8psnr.npy' --cuda  
 
+python main.py --nEpochs 50 --load_path './checkpoints/SRResNet/epoch_100_channels=16_blocks=8.pth' --np_load 'SRResNet_channels = 16_blocks=8psnr.npy' --cuda  
+
+python main.py --nEpochs 50 --load_path './checkpoints/SRResNet_shearAndDilate/epoch_100_channels=4_blocks=32.pth' --np_load 'SRResNet_shearAndDilate_channels = 4_blocks=32psnr.npy' --cuda  
+
+python main.py --nEpochs 50 --load_path './checkpoints/SRResNet/epoch_100_channels=4_blocks=32.pth' --np_load 'SRResNet_channels = 4_blocks=32psnr.npy' --cuda  
+
+END
 
 
 
