@@ -28,6 +28,10 @@ parser.add_argument('--in_size', type=tuple, default=[14,14], help='dimensions o
 parser.add_argument('--res_channels', type=int, default=8, help='number of channels for residual layers. Default=64')
 parser.add_argument('--num_dilations', type=int, default=1, help='number of dilations for residual layers. Default=1')
 parser.add_argument('--num_shears', type=int, default=1, help='number of shears for residual layers. Default=1')
+parser.add_argument('--model_save', type=str, default='', help='directory in which to save the model')
+parser.add_argument('--load_path', type=str, default='', help='pth to load previously trained model ')
+parser.add_argument('--np_load', type=str, default='', help='npy array of previous model to load ')
+
 args = parser.parse_args()
 
 if args.cuda and not torch.cuda.is_available():
@@ -36,7 +40,10 @@ if args.cuda and not torch.cuda.is_available():
 torch.manual_seed(args.seed)
 device = torch.device("cuda" if args.cuda else "cpu")
 
-epoch_psnr = np.zeros((2, args.nEpochs))
+if args.np_load != '':
+	epoch_stats = np.load(args.np_load)
+else:
+	epoch_stats = np.zeros((2, args.nEpochs))
 
 print('===> Loading datasets')
 train_set = get_training_set(2)
@@ -49,7 +56,13 @@ writer = SummaryWriter()
 
 modelFns = {'SRResNet':Models.SRResNet.SRResNet, 'SRResNet_shear':Models.SRResNet_shear.SRResNet_shear, 'SRResNet_dilate':Models.SRResNet_dilate.SRResNet_dilate, 'SRResNet_shearAndDilate':Models.SRResNet_shearAndDilate.SRResNet_shearAndDilate}
 modelFN = modelFns[ args.model ]
-model = modelFN(device, args.res_channels).to(device)
+
+if args.load_path != '':
+	checkpoint = torch.load(args.load_path, map_location=device)
+	model = modelFN(device, args.res_channels).to(device)
+	model.load_state_dict(checkpoint['model'])
+else: 
+	model = modelFN(device, args.res_channels).to(device)
 
 criterion = nn.MSELoss()
 
@@ -103,13 +116,16 @@ def test():
 	return avg_psnr
 
 def checkpoint(epoch):
-	model_out_path = ("./checkpoints/" + args.model+"/epoch_{}_channels=" + str(args.res_channels) + ".pth").format(epoch)
-	torch.save(model, model_out_path)
-	print("Checkpoint saved to {}".format(model_out_path))
+	if args.model_save != '':
+		if not os.path.isdir(args.model_save):
+			os.mkdir(args.model_save)		
+	model_out_path = ("./checkpoints/epoch_{}=.pth").format(epoch))
+	torch.save(model, os.path.join(args.model_save, model_out_path))
+	print("Checkpoint saved to {}".format(os.path.join(args.model_save, model_out_path)))
 
 for epoch in range(1, args.nEpochs + 1):
 	#model = torch.load('./checkpoints/SRResNet_shearAndDilate_epoch_' + str(epoch) + '.pth', map_location = torch.device('cuda'))
-	epoch_psnr[0, epoch -1] = train(epoch)
-	epoch_psnr[1, epoch-1] = test()
+	epoch_stats[0, epoch -1] = train(epoch)
+	epoch_stats[1, epoch-1] = test()
 	checkpoint(epoch)
-np.save(args.model+ "_channels = " + str(args.res_channels) + "psnr", epoch_psnr)
+np.save('stats.npy', epoch_stats)
