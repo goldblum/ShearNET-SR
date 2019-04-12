@@ -8,11 +8,11 @@ from PIL import Image
 
 
 def is_image_file(filename):
-	return any(filename.endswith(extension) for extension in [".TIF"])
+	return any(filename.endswith(extension) for extension in [".tif"])
 
 
 def load_img(filepath):
-	endings = ["_GRE.TIF", "_NIR.TIF", "_RED.TIF", "_REG.TIF"]
+	endings = ["_GRE.tif", "_NIR.tif", "_RED.tif", "_REG.tif"]
 	return [skio.imread(filepath + ending) for ending in endings] 
 
 
@@ -30,17 +30,19 @@ class DatasetFromFolder(data.Dataset):
 		self.target_transform = target_transform
 
 	def __getitem__(self, index):
-		row, col = np.shape(skio.imread(self.image_filenames[0] + "_REG.TIF"))
+		row, col = np.shape(skio.imread(self.image_filenames[0] + "_REG.tif"))
 		input = load_img(self.image_filenames[index])
 		target = load_img(self.label_filenames[index]) 
+		means = [30322.45315498, 33028.37855216, 27555.90896633, 30824.52523748]
+		std = [7555.26842064,  7995.16945722, 13374.68697786,  5576.38636]
+
 		start_pixel = [np.random.randint(0, row - self.crop_size), np.random.randint(0, col - self.crop_size)]
-		#print("start pixel", start_pixel, [start_pixel[0]*2, start_pixel[1]*2], "crop size", self.crop_size, self.crop_size * 2)
 		if self.input_transform:
 			for i in range(self.num_channels):
-				input[i] = self.input_transform(input[i], self.crop_size, start_pixel)
+				input[i] = self.input_transform((input[i] - means[i])/std[i], self.crop_size, start_pixel)
 		if self.target_transform:
 			for i in range(self.num_channels):
-				target[i] = self.target_transform(target[i], self.crop_size * 2, [start_pixel[0]*2, start_pixel[1]*2])
+				target[i] = self.target_transform((target[i] - means[i])/std[i], self.crop_size * 2, [start_pixel[0]*2, start_pixel[1]*2])
 		return torch.stack(input), torch.stack(target)
 
 	def __len__(self):

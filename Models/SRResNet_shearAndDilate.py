@@ -79,8 +79,11 @@ class shear_layer(nn.Module):
 		self.num_shears = num_shears #including no shear
 		self.kernel_size = kernel_size
 		self.device = device
+		#CHANGED .cuda() to .device()
 		self.conv_weight = nn.Parameter(torch.randn(out_channels, in_channels, kernel_size, kernel_size).cuda())
 		nn.init.orthogonal_(self.conv_weight, init.calculate_gain('relu'))
+		self.conv1x1_weight = nn.Parameter(torch.randn(out_channels, in_channels * 10, 1, 1).cuda())
+		nn.init.orthogonal_(self.conv1x1_weight, init.calculate_gain('relu'))
 		
 
 
@@ -94,20 +97,20 @@ class shear_layer(nn.Module):
 					
 					direction, shift, transpose = shear_manager(j, i > 0)
 					pad = calculate_padding(self.in_size, self.in_size, 1, dilated_kernel_size + 2*shift , 1)
-					out = torch.cat((out, F.relu(F.conv2d(x, shear_weights(dilate_weights(self.conv_weight, i + 1, 3, self.device), dilated_kernel_size , direction, shift, transpose, self.device), bias=None, stride=1, padding=pad, dilation=1, groups=1))),1)		
-		return out
+					out = torch.cat((out, F.conv2d(x, shear_weights(dilate_weights(self.conv_weight, i + 1, 3, self.device), dilated_kernel_size , direction, shift, transpose, self.device), bias=None, stride=1, padding=pad, dilation=1, groups=1)),1)		
+		return F.conv2d(out,self.conv1x1_weight) 
 
 
 class _Residual_Block(nn.Module):
     def __init__(self, in_size, device, res_trainable_channels):
         super(_Residual_Block, self).__init__()
-        self.conv1 = shear_layer( res_trainable_channels * 10, in_size, res_trainable_channels, 2, 5, 3, device)
+        self.conv1 = shear_layer(res_trainable_channels, in_size, res_trainable_channels, 2, 5, 3, device)
 			#nn.Conv2d(res_trainable_channels, out_channels=res_trainable_channels, kernel_size=3, stride=1, padding=1, bias=False)
-        self.in1 = nn.InstanceNorm2d(res_trainable_channels*10, affine=True)
+        self.in1 = nn.InstanceNorm2d(res_trainable_channels, affine=True)
         self.relu = nn.LeakyReLU(0.2, inplace=True)
-        self.conv2 = shear_layer( res_trainable_channels * 10, in_size, res_trainable_channels,  2, 5, 3, device)
+        self.conv2 = shear_layer( res_trainable_channels, in_size, res_trainable_channels,  2, 5, 3, device)
 			#nn.Conv2d(in_channels=res_trainable_channels, out_channels=res_trainable_channels, kernel_size=3, stride=1, padding=1, bias=False)
-        self.in2 = nn.InstanceNorm2d(res_trainable_channels*10, affine=True)
+        self.in2 = nn.InstanceNorm2d(res_trainable_channels, affine=True)
 
     def forward(self, x):
         identity_data = x
@@ -122,13 +125,13 @@ class Net(nn.Module):
 	self.res_trainable_channels = res_trainable_channels
 	self.device = device
 	self.im_size = im_size
-        self.conv_input = nn.Conv2d(in_channels=4, out_channels = self.res_trainable_channels * 10, kernel_size=9, stride=1, padding=4, bias=False)
+        self.conv_input = nn.Conv2d(in_channels=4, out_channels = self.res_trainable_channels, kernel_size=9, stride=1, padding=4, bias=False)
         self.relu = nn.LeakyReLU(0.2, inplace=True)
         self.residual = self.make_layer(_Residual_Block, 16)
-        self.conv_mid = nn.Conv2d(in_channels=self.res_trainable_channels * 10, out_channels=self.res_trainable_channels * 10, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn_mid = nn.InstanceNorm2d(self.res_trainable_channels * 10, affine=True)
+        self.conv_mid = nn.Conv2d(in_channels=self.res_trainable_channels, out_channels=self.res_trainable_channels, kernel_size=3, stride=1, padding=1, bias=False)
+        self.bn_mid = nn.InstanceNorm2d(self.res_trainable_channels, affine=True)
         self.upscale2x = nn.Sequential(
-            nn.Conv2d(in_channels=self.res_trainable_channels * 10, out_channels=64, kernel_size=3, stride=1, padding=1, bias=False),
+            nn.Conv2d(in_channels=self.res_trainable_channels, out_channels=64, kernel_size=3, stride=1, padding=1, bias=False),
             nn.PixelShuffle(2),
             nn.LeakyReLU(0.2, inplace=True)
         )

@@ -36,12 +36,13 @@ def image_crop(img, crop_size, start_pixel):
 
 
 def input_transform(img, crop_size, start_pixel):
-	return torch.from_numpy(image_crop(img, crop_size, start_pixel))
+	return torch.from_numpy(img)
+	#return torch.from_numpy(image_crop(img, crop_size, start_pixel))
 
 
 def target_transform(img, crop_size, start_pixel):
-	return torch.from_numpy(image_crop(img, crop_size, start_pixel))
-
+	return torch.from_numpy(img)
+	#return torch.from_numpy(image_crop(img, crop_size, start_pixel))
 
 def get_training_set(upscale_factor):
 	root_dir = download_ms()

@@ -1,10 +1,53 @@
-python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 4 --model_save "./ShearAndDilate_ch=4_ConvergenceTest" 
+#python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 4 --model_save "./ShearAndDilate_ch=4_1x_blah" 
+python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate_3d" --res_channels 4 --model_save "./ShearAndDilate_ch=4_3d_blah" 
 
-python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 4 --num_shears 0 --model_save "./ShearAndDilate_ch=4_NoShears" 
-
-python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 4 --num_dilations 0 --model_save "./ShearAndDilate_ch=4_NoDilations" 
 
 : <<'END'
+#python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 16 --num_shears 0 --model_save "./ShearAndDilate_ch=16_NoShears" 
+
+#python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 16 --num_dilations 0 --model_save "./ShearAndDilate_ch=16_NoDilations" 
+
+python main.py --nEpochs 200 --cuda --model "SRResNet" --res_channels 16 --model_save "./ResNet_ch=16" 
+
+#python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 2 --model_save "./ShearAndDilate_ch=2_1x" 
+
+python main.py --nEpochs 200 --cuda --model "SRResNet" --res_channels 2 --model_save "./ResNet_ch=2" 
+
+#python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 2 --num_shears 0 --model_save "./ShearAndDilate_ch=2_NoShears" 
+
+#python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 2 --num_dilations 0 --model_save "./ShearAndDilate_ch=2_NoDilations" 
+
+#python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 4 --model_save "./ShearAndDilate_ch=4_1x" 
+
+python main.py --nEpochs 200 --cuda --model "SRResNet" --res_channels 4 --model_save "./ResNet_ch=4" 
+
+#python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 4 --num_shears 0 --model_save "./ShearAndDilate_ch=4_NoShears" 
+
+#python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 4 --num_dilations 0 --model_save "./ShearAndDilate_ch=4_NoDilations" 
+
+#python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 8 --model_save "./ShearAndDilate_ch=8_1x" 
+#python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 16 --model_save "./ShearAndDilate_ch=16_1x" 
+
+python main.py --nEpochs 200 --cuda --model "SRResNet" --res_channels 8 --model_save "./ResNet_ch=8" 
+
+#python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 8 --num_shears 0 --model_save "./ShearAndDilate_ch=8_NoShears" 
+
+#python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 8 --num_dilations 0 --model_save "./ShearAndDilate_ch=8_NoDilations" 
+
+#python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 32 --model_save "./ShearAndDilate_ch=32_1x" 
+
+python main.py --nEpochs 200 --cuda --model "SRResNet" --res_channels 32 --model_save "./ResNet_ch=32" 
+python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 2 --model_save "./ShearAndDilate_ch=2" 
+
+python main.py --nEpochs 200 --cuda --model "SRResNet" --res_channels 2 --model_save "./ResNet_ch=2" 
+
+python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 2 --num_shears 0 --model_save "./ShearAndDilate_ch=2_NoShears" 
+
+python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate" --res_channels 2 --num_dilations 0 --model_save "./ShearAndDilate_ch=2_NoDilations" 
+
+
+
+
 python main.py --nEpochs 50 --load_path './checkpoints/SRResNet_shearAndDilate/epoch_100_channels=4_blocks=16.pth' --np_load 'SRResNet_shearAndDilate_channels = 4_blocks=16psnr.npy' --cuda 
 
 python main.py --nEpochs 50 --load_path './checkpoints/SRResNet/epoch_100_channels=4_blocks=16.pth' --np_load 'SRResNet_channels = 4_blocks=16psnr.npy' --cuda 
@@ -24,6 +67,20 @@ python main.py --nEpochs 50 --load_path './checkpoints/SRResNet/epoch_100_channe
 python main.py --nEpochs 50 --load_path './checkpoints/SRResNet_shearAndDilate/epoch_100_channels=4_blocks=32.pth' --np_load 'SRResNet_shearAndDilate_channels = 4_blocks=32psnr.npy' --cuda  
 
 python main.py --nEpochs 50 --load_path './checkpoints/SRResNet/epoch_100_channels=4_blocks=32.pth' --np_load 'SRResNet_channels = 4_blocks=32psnr.npy' --cuda  
+
+
+python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate_3d" --res_channels 2 --model_save "./ShearAndDilate_ch=2_3d" 
+
+python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate_3d" --res_channels 4 --model_save "./ShearAndDilate_ch=4_3d" 
+
+python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate_3d" --res_channels 8 --model_save "./ShearAndDilate_ch=8_3d" 
+
+python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate_3d" --res_channels 16 --model_save "./ShearAndDilate_ch=16_3d" 
+
+python main.py --nEpochs 200 --cuda --model "SRResNet_shearAndDilate_3d" --res_channels 32 --model_save "./ShearAndDilate_ch=32_3d" 
+
+
+
 
 END
 
