@@ -1,5 +1,3 @@
 import SRResNet
-import SRResNet_shear
-import SRResNet_dilate
 import SRResNet_shearAndDilate
 import SRResNet_shearAndDilate_3d
