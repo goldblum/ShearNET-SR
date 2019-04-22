@@ -5,6 +5,16 @@ Images/
 runs/
 Models/
 Results/
+super_resolve.py
+visualize_weights.py
+visualizations.py
+stats.npy
+bicubic.py
+model.py
+plotting.py
+parameter_check.py
+produce_images.py
+shear_visualization
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
